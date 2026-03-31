@@ -40,7 +40,7 @@ Fork it. Improve it. Make it yours. And if you want to hate on free open source 
 
 ## Install — 30 seconds
 
-**Requirements:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Git](https://git-scm.com/), [Bun](https://bun.sh/) v1.0+, [Node.js](https://nodejs.org/) (Windows only)
+**Requirements:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [GitHub Copilot CLI](https://githubnext.com/projects/copilot-cli), [Git](https://git-scm.com/), [Bun](https://bun.sh/) v1.0+, [Node.js](https://nodejs.org/) (Windows only)
 
 ### Step 1: Install on your machine
 
@@ -102,6 +102,27 @@ cd ~/gstack && ./setup --host factory
 ```
 
 Skills install to `~/.factory/skills/gstack-*/`. Restart `droid` to rescan skills, then type `/qa` to get started.
+
+### GitHub Copilot CLI (Claude models)
+
+Copilot CLI supports the same `.claude/skills/` layout as Claude Code. All 31 gstack skills work as `/` commands when using Claude models in Copilot CLI.
+
+**Install on your machine:**
+
+```bash
+git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack
+cd ~/.claude/skills/gstack && ./setup --host copilot
+```
+
+**Add to a project (so teammates get it):**
+
+```bash
+cp -Rf ~/.claude/skills/gstack .claude/skills/gstack
+rm -rf .claude/skills/gstack/.git
+cd .claude/skills/gstack && ./setup --host copilot --local
+```
+
+If you already have gstack installed for Claude Code, you're done — Copilot CLI reads the same `~/.claude/skills/` directory. No separate install needed.
 
 ## See it work
 
