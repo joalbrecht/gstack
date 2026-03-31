@@ -40,7 +40,7 @@ Fork it. Improve it. Make it yours. And if you want to hate on free open source 
 
 ## Install — 30 seconds
 
-**Requirements:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Git](https://git-scm.com/), [Bun](https://bun.sh/) v1.0+, [Node.js](https://nodejs.org/) (Windows only)
+**Requirements:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [GitHub Copilot CLI](https://githubnext.com/projects/copilot-cli), [Git](https://git-scm.com/), [Bun](https://bun.sh/) v1.0+, [Node.js](https://nodejs.org/) (Windows only)
 
 ### Step 1: Install on your machine
 
@@ -102,6 +102,20 @@ cd ~/gstack && ./setup --host factory
 ```
 
 Skills install to `~/.factory/skills/gstack-*/`. Restart `droid` to rescan skills, then type `/qa` to get started.
+
+### GitHub Copilot CLI (Claude models)
+
+Copilot CLI supports the same `.claude/skills/` layout as Claude Code. All 31 gstack skills work as `/` commands when using Claude models in Copilot CLI.
+
+Open Copilot CLI in any repo and paste this. It does the rest.
+
+> Install gstack: run **`git clone --single-branch -b copilot --depth 1 https://github.com/joalbrecht/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup --host copilot`** then add a "gstack" section to CLAUDE.md that says to use the /browse skill from gstack for all web browsing, never use mcp\_\_claude-in-chrome\_\_\* tools, and lists the available skills: /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /design-consultation, /design-shotgun, /design-html, /review, /ship, /land-and-deploy, /canary, /benchmark, /browse, /connect-chrome, /qa, /qa-only, /design-review, /setup-browser-cookies, /setup-deploy, /retro, /investigate, /document-release, /codex, /cso, /autoplan, /careful, /freeze, /guard, /unfreeze, /gstack-upgrade, /learn. Then ask the user if they also want to add gstack to the current project so teammates get it.
+
+**Add to a project (so teammates get it):**
+
+> Add gstack to this project: run **`cp -Rf ~/.claude/skills/gstack .claude/skills/gstack && rm -rf .claude/skills/gstack/.git && cd .claude/skills/gstack && ./setup --host copilot --local`** then add a "gstack" section to this project's CLAUDE.md that says to use the /browse skill from gstack for all web browsing, never use mcp\_\_claude-in-chrome\_\_\* tools, lists the available skills: /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /design-consultation, /design-shotgun, /design-html, /review, /ship, /land-and-deploy, /canary, /benchmark, /browse, /connect-chrome, /qa, /qa-only, /design-review, /setup-browser-cookies, /setup-deploy, /retro, /investigate, /document-release, /codex, /cso, /autoplan, /careful, /freeze, /guard, /unfreeze, /gstack-upgrade, /learn, and tells the agent that if gstack skills aren't working, run `cd .claude/skills/gstack && ./setup --host copilot` to build the binary and register skills.
+
+If you already have gstack installed for Claude Code, you're done — Copilot CLI reads the same `~/.claude/skills/` directory. No separate install needed.
 
 ## See it work
 

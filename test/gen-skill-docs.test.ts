@@ -1984,7 +1984,7 @@ describe('setup script validation', () => {
   test('Copilot setup reuses the Claude-compatible .claude/skills layout', () => {
     expect(setupContent).toContain('INSTALL_COPILOT=');
     expect(setupContent).toContain('GitHub Copilot CLI officially supports .claude/skills');
-    expect(setupContent).toContain('INSTALL_COPILOT" -eq 1');
+    expect(setupContent).toContain('install_claude_like "copilot"');
   });
 
   // T1: Sidecar skip guard — prevents .agents/skills/gstack from being linked as a skill
