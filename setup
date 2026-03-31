@@ -88,15 +88,19 @@ else
 fi
 
 # --local: install to .claude/skills/ in the current working directory
+# Copilot CLI officially supports .claude/skills and ~/.claude/skills, so it
+# shares the same lowest-friction local layout as Claude Code.
 if [ "$LOCAL_INSTALL" -eq 1 ]; then
-  if [ "$HOST" = "codex" ]; then
-    echo "Error: --local is only supported for Claude Code and Copilot CLI (not Codex)." >&2
+  if [ "$HOST" = "codex" ] || [ "$HOST" = "kiro" ] || [ "$HOST" = "factory" ]; then
+    echo "Error: --local is only supported for Claude Code and Copilot CLI (not Codex, Kiro, or Factory)." >&2
     exit 1
   fi
   INSTALL_SKILLS_DIR="$(pwd)/.claude/skills"
   mkdir -p "$INSTALL_SKILLS_DIR"
-  HOST="claude"
+  [ "$HOST" = "auto" ] && HOST="claude"
   INSTALL_CODEX=0
+  INSTALL_KIRO=0
+  INSTALL_FACTORY=0
 fi
 
 # For auto: detect which agents are installed
@@ -564,7 +568,11 @@ if [ "$SKILLS_BASENAME" = "skills" ] && [ "$SKILLS_PARENT_BASENAME" = ".agents" 
   CODEX_REPO_LOCAL=1
 fi
 
-if [ "$INSTALL_CLAUDE" -eq 1 ]; then
+# ─── Helper: full Claude-layout install (cleanup + patch + link) ──────────
+# Both Claude Code and Copilot CLI use .claude/skills/, so this helper
+# performs the complete install sequence for either host.
+install_claude_like() {
+  local host_label="$1"
   if [ "$SKILLS_BASENAME" = "skills" ]; then
     # Clean up stale symlinks from the opposite prefix mode
     if [ "$SKILL_PREFIX" -eq 1 ]; then
@@ -577,36 +585,27 @@ if [ "$INSTALL_CLAUDE" -eq 1 ]; then
     "$SOURCE_GSTACK_DIR/bin/gstack-patch-names" "$SOURCE_GSTACK_DIR" "$SKILL_PREFIX"
     link_claude_skill_dirs "$SOURCE_GSTACK_DIR" "$INSTALL_SKILLS_DIR"
     if [ "$LOCAL_INSTALL" -eq 1 ]; then
-      echo "gstack ready (project-local)."
+      echo "gstack ready (project-local $host_label)."
       echo "  skills: $INSTALL_SKILLS_DIR"
     else
-      echo "gstack ready (claude)."
+      echo "gstack ready ($host_label)."
     fi
     echo "  browse: $BROWSE_BIN"
   else
-    echo "gstack ready (claude)."
+    echo "gstack ready ($host_label)."
     echo "  browse: $BROWSE_BIN"
     echo "  (skipped skill symlinks — not inside .claude/skills/)"
   fi
+}
+
+if [ "$INSTALL_CLAUDE" -eq 1 ]; then
+  install_claude_like "claude"
 fi
 
 # 4b. Install for Copilot CLI (GitHub Copilot CLI officially supports .claude/skills and
 # ~/.claude/skills, so it shares the same lowest-friction layout as Claude Code.)
 if [ "$INSTALL_COPILOT" -eq 1 ]; then
-  if [ "$SKILLS_BASENAME" = "skills" ]; then
-    link_claude_skill_dirs "$SOURCE_GSTACK_DIR" "$INSTALL_SKILLS_DIR"
-    if [ "$LOCAL_INSTALL" -eq 1 ]; then
-      echo "gstack ready (project-local copilot)."
-      echo "  skills: $INSTALL_SKILLS_DIR"
-    else
-      echo "gstack ready (copilot)."
-    fi
-    echo "  browse: $BROWSE_BIN"
-  else
-    echo "gstack ready (copilot)."
-    echo "  browse: $BROWSE_BIN"
-    echo "  (skipped skill symlinks — not inside .claude/skills/)"
-  fi
+  install_claude_like "copilot"
 fi
 
 # 5. Install for Codex
